@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "tecnico1@empresa.com",
+      "name": "Técnico 1",
+      "active": true
+    },
+    {
+      "id": 2,
+      "email": "tecnico2@empresa.com",
+      "name": "Técnico 2",
+      "active": false
+    }
+  ]
+}
