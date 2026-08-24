@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "username": "rafael.admin",
+      "name": "Rafael",
+      "role": "admin",
+      "active": true,
+      "salt": "aYRw8oMbC0/b4bYNVrC4QA==",
+      "passwordHash": "a1Yk3qFFa0Ezt/rOi0CCB6EpvUmHA0H0kClGJCBTXnW2iQuL3O3koDmgdyKB/TMhbwafnX333c4T2ONbvBoYPg=="
+    },
+    {
+      "username": "jean",
+      "name": "Jean",
+      "role": "user",
+      "active": true,
+      "salt": "1lGYiQFr7+tGTHcc2GKlUQ==",
+      "passwordHash": "fGnrvPo/2pXOoKz733jscwuRc4cXKx9rBkvc1RyMpW+O1lfNHTKKYaYxR6cX9mN9K3R3tRUUJGTJqyCbvRnkJQ=="
+    }
+  ]
+}
