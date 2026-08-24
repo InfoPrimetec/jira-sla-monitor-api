@@ -1,10 +1,18 @@
 # Jira SLA Monitor API
 
-API de autorização da extensão Jira SLA Monitor.
+API de autorização para o projeto Jira SLA Monitor.
 
 ## Versão
 
-**1.1.0**
+**1.2.0**
+
+## Novidade desta versão
+
+Foi adicionada uma página de teste para validar a autenticação antes da integração com a extensão:
+
+```text
+/test
+```
 
 ## Estrutura
 
@@ -14,61 +22,31 @@ api/
   health.js
 data/
   users.json
+public/
+  test.html
 package.json
+README.md
 vercel.json
 ```
 
-## Autenticação
+## Teste rápido
 
-A rota de autenticação agora usa **usuário + senha** via `POST`.
-
-Endpoint:
+Health check:
 
 ```text
-POST /api/auth
-Content-Type: application/json
+GET /api/health
 ```
 
-Corpo de exemplo:
+Página de autenticação:
 
-```json
-{
-  "username": "rafael.admin",
-  "password": "Agosto@2026"
-}
+```text
+/test
 ```
 
-Resposta esperada:
+Credenciais de demonstração:
 
-```json
-{
-  "authorized": true,
-  "user": {
-    "username": "rafael.admin",
-    "name": "Rafael",
-    "role": "admin"
-  }
-}
-```
-
-Os usuários de demonstração são:
-
-- `rafael.admin` — perfil `admin`
-- `jean` — perfil `user`
-
-A senha de demonstração usada para ambos é `Agosto@2026`.
-
-## Segurança
-
-As senhas **não ficam salvas em texto puro** no `users.json`.
-A API usa `scrypt` com salt individual para validar as credenciais.
-
-Mesmo assim, para uso real:
-
-- mantenha o repositório privado;
-- troque as credenciais de demonstração;
-- não coloque tokens, chaves ou segredos no repositório;
-- use Environment Variables da Vercel para segredos reais.
+- `rafael.admin` / `Agosto@2026`
+- `jean` / `Agosto@2026`
 
 ## Bloqueio remoto
 
@@ -84,20 +62,14 @@ para:
 "active": false
 ```
 
-Depois faça commit no GitHub. A Vercel fará um novo deploy e a API passará a responder `user_disabled`.
+Depois faça commit no GitHub. A Vercel fará um novo deploy.
 
-## Health check
+## Segurança
 
-```text
-GET /api/health
-```
+As senhas não ficam em texto puro no `users.json`; são validadas com `scrypt` e salt individual.
 
-Resposta:
-
-```json
-{
-  "status": "online",
-  "project": "Jira SLA Monitor API",
-  "version": "1.1.0"
-}
-```
+Mesmo assim, em produção:
+- mantenha o repositório privado;
+- troque as credenciais de demonstração;
+- não coloque tokens, chaves ou segredos no repositório;
+- use Environment Variables da Vercel para segredos reais.
