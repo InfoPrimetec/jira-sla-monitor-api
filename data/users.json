@@ -20,7 +20,7 @@
       "username": "teste.api",
       "name": "Teste API Editado",
       "role": "user",
-      "active": true,
+      "active": false,
       "salt": "1oStmj8DE2cPSN3PdNYMZg==",
       "passwordHash": "XEN+tQZqNhLwnK2p4KlU84H0fMAijNKgBCjcrgWR2Q04BpccS/pNiJ7D2Qh+wrY0TSWPIEqNakG5Lyf9J18WAg=="
     }
