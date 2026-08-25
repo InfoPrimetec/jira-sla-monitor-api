@@ -1,123 +1,46 @@
 # SLA Pulse API
 
-API de autenticação e controle de acesso do SLA Pulse.
+## v1.4.0 — Administração de usuários
 
-## Versão 1.3.0
+Novo endpoint protegido:
 
-Esta versão inicia a fase de segurança da v3.1.6 da extensão.
+`/api/admin/users`
 
-### Novidades
+Métodos:
+- GET: listar usuários
+- POST: criar usuário
+- PATCH: editar, ativar/desativar, trocar perfil ou redefinir senha
+- DELETE: excluir usuário
 
-- login por usuário e senha;
-- token de sessão assinado com HMAC-SHA256;
-- sessão com expiração;
-- endpoint `GET /api/me`;
-- revalidação do usuário no `users.json` a cada consulta de sessão;
-- bloqueio remoto continua funcionando mesmo com um token ainda válido;
-- perfil (`admin` / `user`) é lido novamente no servidor;
-- nenhuma senha ou segredo de sessão é incluído no código da extensão.
+A API exige token de sessão e confirma no servidor que o usuário atual está ativo e possui `role: admin`.
 
-## Variável obrigatória na Vercel
+### Proteções
+- usuário comum não administra usuários;
+- admin não pode excluir a própria conta;
+- admin não pode desativar a própria conta;
+- admin não pode remover seu próprio perfil;
+- último admin ativo é protegido;
+- senhas continuam em scrypt + salt.
 
-Antes de testar a v1.3.0, crie:
+### Variáveis Vercel necessárias
 
-```text
-SESSION_SECRET
-```
+Já existente:
+`SESSION_SECRET`
 
-Ela deve ter pelo menos 32 caracteres e deve ser um valor aleatório forte.
+Adicionar:
+- `GITHUB_TOKEN`
+- `GITHUB_OWNER`
+- `GITHUB_REPO`
+- `GITHUB_BRANCH`
 
-Exemplo de nome no painel:
+Para este projeto:
+- `GITHUB_OWNER=InfoPrimetec`
+- `GITHUB_REPO=jira-sla-monitor-api`
+- `GITHUB_BRANCH=main`
 
-```text
-Settings
-→ Environment Variables
-→ SESSION_SECRET
-```
+O `GITHUB_TOKEN` deve ter o menor privilégio possível e acesso somente a este repositório, com `Contents: Read and write`.
 
-**Não coloque o valor dessa variável no GitHub, README ou extensão.**
+Nunca coloque o token no GitHub ou na extensão.
 
-Opcionalmente:
-
-```text
-SESSION_TTL_MINUTES
-```
-
-Faixa aceita: 15 a 1440 minutos. Se não for configurada, a sessão dura 480 minutos (8 horas).
-
-Depois de criar/alterar Environment Variables, faça um novo deployment na Vercel.
-
-## Endpoints
-
-### Health
-
-```text
-GET /api/health
-```
-
-### Login
-
-```text
-POST /api/auth
-Content-Type: application/json
-```
-
-Corpo:
-
-```json
-{
-  "username": "rafael.admin",
-  "password": "senha"
-}
-```
-
-Resposta bem-sucedida:
-
-```json
-{
-  "authorized": true,
-  "token": "...",
-  "expiresAt": "...",
-  "user": {
-    "username": "rafael.admin",
-    "name": "Rafael",
-    "role": "admin"
-  }
-}
-```
-
-### Validar sessão
-
-```text
-GET /api/me
-Authorization: Bearer TOKEN
-```
-
-A API valida a assinatura/expiração do token e consulta novamente o cadastro atual do usuário.
-
-Se o usuário tiver sido desativado depois do login, `/api/me` responde:
-
-```json
-{
-  "authorized": false,
-  "reason": "user_disabled"
-}
-```
-
-## Teste visual
-
-```text
-/test
-```
-
-A página permite:
-
-1. fazer login;
-2. armazenar o token apenas na sessão da aba;
-3. testar `/api/me`.
-
-## Arquitetura de privacidade
-
-Esta API é destinada exclusivamente a identidade, autenticação e autorização.
-
-Dados operacionais do Jira/SLA Pulse não devem ser enviados para estes endpoints.
+### Privacidade
+A API permanece restrita a identidade e autorização. Nenhum dado operacional do Jira deve ser enviado a esses endpoints.
