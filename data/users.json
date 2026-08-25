@@ -15,14 +15,6 @@
       "active": true,
       "salt": "1lGYiQFr7+tGTHcc2GKlUQ==",
       "passwordHash": "fGnrvPo/2pXOoKz733jscwuRc4cXKx9rBkvc1RyMpW+O1lfNHTKKYaYxR6cX9mN9K3R3tRUUJGTJqyCbvRnkJQ=="
-    },
-    {
-      "username": "teste.api",
-      "name": "Teste API Editado",
-      "role": "user",
-      "active": true,
-      "salt": "1oStmj8DE2cPSN3PdNYMZg==",
-      "passwordHash": "XEN+tQZqNhLwnK2p4KlU84H0fMAijNKgBCjcrgWR2Q04BpccS/pNiJ7D2Qh+wrY0TSWPIEqNakG5Lyf9J18WAg=="
     }
   ]
 }
