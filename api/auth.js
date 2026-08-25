@@ -1,11 +1,11 @@
-import fs from "fs";
-import path from "path";
 import crypto from "crypto";
+import { createSessionToken } from "../lib/session.js";
+import { findUserByUsername, publicUser } from "../lib/users.js";
 
-function setCors(res) {
+function setHeaders(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Cache-Control", "no-store");
 }
 
@@ -27,7 +27,7 @@ function verifyPassword(password, saltBase64, hashBase64) {
 }
 
 export default function handler(req, res) {
-  setCors(res);
+  setHeaders(res);
 
   if (req.method === "OPTIONS") {
     return res.status(204).end();
@@ -55,16 +55,7 @@ export default function handler(req, res) {
   }
 
   try {
-    const filePath = path.join(process.cwd(), "data", "users.json");
-    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-
-    const normalizedUsername = username.trim().toLowerCase();
-
-    const user = data.users.find(
-      (item) =>
-        typeof item.username === "string" &&
-        item.username.trim().toLowerCase() === normalizedUsername
-    );
+    const user = findUserByUsername(username);
 
     if (!user) {
       return res.status(401).json({
@@ -93,16 +84,23 @@ export default function handler(req, res) {
       });
     }
 
+    const session = createSessionToken(user.username);
+
     return res.status(200).json({
       authorized: true,
-      user: {
-        username: user.username,
-        name: user.name,
-        role: user.role
-      }
+      token: session.token,
+      expiresAt: session.expiresAt,
+      user: publicUser(user)
     });
   } catch (error) {
-    console.error("Auth error:", error);
+    console.error("Auth error:", error?.code || error?.message || "unknown");
+
+    if (error?.code === "SESSION_SECRET_NOT_CONFIGURED") {
+      return res.status(503).json({
+        authorized: false,
+        error: "server_not_configured"
+      });
+    }
 
     return res.status(500).json({
       authorized: false,

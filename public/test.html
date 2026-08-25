@@ -1,178 +1,108 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jira SLA Monitor - Teste de Autenticação</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SLA Pulse API — Teste de Sessão</title>
   <style>
-    :root {
-      color-scheme: dark;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
+    :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; }
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #111827;
-      color: #f3f4f6;
-      padding: 24px;
-    }
-
-    .card {
-      width: min(460px, 100%);
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.35);
-    }
-
-    h1 {
-      margin: 0 0 6px;
-      font-size: 24px;
-    }
-
-    .subtitle {
-      margin: 0 0 24px;
-      color: #9ca3af;
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 7px;
-      font-weight: 600;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: #f9fafb;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #9ca3af;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px 14px;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #f3f4f6;
-      color: #111827;
-    }
-
-    button:disabled {
-      opacity: .65;
-      cursor: wait;
-    }
-
-    .result {
-      margin-top: 20px;
-      padding: 14px;
-      border-radius: 10px;
-      background: #111827;
-      border: 1px solid #374151;
-      min-height: 52px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .ok { border-color: #166534; }
-    .error { border-color: #991b1b; }
-
-    .hint {
-      margin-top: 16px;
-      font-size: 13px;
-      line-height: 1.45;
-      color: #9ca3af;
-    }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; background:#111827; color:#f3f4f6; padding:24px; }
+    .card { width:min(520px,100%); background:#1f2937; border:1px solid #374151; border-radius:16px; padding:28px; }
+    h1 { margin:0 0 4px; }
+    p { color:#9ca3af; }
+    label { display:block; margin:14px 0 7px; font-weight:600; }
+    input { width:100%; padding:12px; border:1px solid #4b5563; border-radius:10px; background:#111827; color:#fff; }
+    .buttons { display:flex; gap:10px; margin-top:18px; }
+    button { flex:1; padding:12px; border:0; border-radius:10px; font-weight:700; cursor:pointer; }
+    #result { margin-top:18px; padding:14px; border:1px solid #374151; border-radius:10px; background:#111827; white-space:pre-wrap; word-break:break-word; min-height:90px; }
+    .ok { border-color:#166534!important; }
+    .error { border-color:#991b1b!important; }
+    .hint { font-size:12px; line-height:1.5; margin-top:14px; color:#9ca3af; }
   </style>
 </head>
 <body>
   <main class="card">
-    <h1>Jira SLA Monitor</h1>
-    <p class="subtitle">Teste de autenticação da API</p>
+    <h1>SLA Pulse API</h1>
+    <p>Teste da autenticação com sessão — v1.3.0</p>
 
-    <form id="loginForm">
-      <label for="username">Usuário</label>
-      <input id="username" name="username" autocomplete="username" required />
+    <label for="username">Usuário</label>
+    <input id="username" autocomplete="username">
 
-      <label for="password">Senha</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required />
+    <label for="password">Senha</label>
+    <input id="password" type="password" autocomplete="current-password">
 
-      <button id="submitButton" type="submit">TESTAR LOGIN</button>
-    </form>
+    <div class="buttons">
+      <button id="login">Entrar</button>
+      <button id="validate">Validar sessão</button>
+    </div>
 
-    <div id="result" class="result">Aguardando teste...</div>
+    <div id="result">Aguardando teste...</div>
 
     <div class="hint">
-      Esta página existe apenas para validar a API antes da integração com a extensão.
-      Não exibe nem armazena a senha digitada.
+      O token de teste fica somente no sessionStorage desta aba. Fechar a aba remove o token local.
     </div>
   </main>
 
   <script>
-    const form = document.getElementById("loginForm");
     const result = document.getElementById("result");
-    const button = document.getElementById("submitButton");
+    const loginButton = document.getElementById("login");
+    const validateButton = document.getElementById("validate");
 
-    function show(message, type) {
-      result.className = "result" + (type ? " " + type : "");
-      result.textContent = message;
+    function show(value, type = "") {
+      result.className = type;
+      result.textContent = typeof value === "string" ? value : JSON.stringify(value, null, 2);
     }
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
+    loginButton.addEventListener("click", async () => {
+      show("Autenticando...");
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
-
-      button.disabled = true;
-      show("Testando...", "");
 
       try {
         const response = await fetch("/api/auth", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password })
         });
 
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json();
 
-        if (response.ok && data.authorized) {
-          const user = data.user || {};
-          show(
-            "AUTORIZADO\n" +
-            "Usuário: " + (user.username || username) + "\n" +
-            "Nome: " + (user.name || "-") + "\n" +
-            "Perfil: " + (user.role || "-"),
-            "ok"
-          );
+        if (response.ok && data.authorized && data.token) {
+          sessionStorage.setItem("slaPulseTestToken", data.token);
+          show({
+            authorized: data.authorized,
+            user: data.user,
+            expiresAt: data.expiresAt,
+            tokenStoredInSession: true
+          }, "ok");
         } else {
-          show(
-            "ACESSO NEGADO\n" +
-            "Motivo: " + (data.reason || data.error || "unknown_error"),
-            "error"
-          );
+          show(data, "error");
         }
       } catch (error) {
-        show("ERRO DE CONEXÃO\n" + error.message, "error");
-      } finally {
-        button.disabled = false;
+        show("Erro: " + error.message, "error");
+      }
+    });
+
+    validateButton.addEventListener("click", async () => {
+      const token = sessionStorage.getItem("slaPulseTestToken");
+
+      if (!token) {
+        show("Nenhum token de sessão disponível. Faça login primeiro.", "error");
+        return;
+      }
+
+      show("Validando sessão...");
+
+      try {
+        const response = await fetch("/api/me", {
+          headers: { Authorization: "Bearer " + token }
+        });
+
+        const data = await response.json();
+        show(data, response.ok ? "ok" : "error");
+      } catch (error) {
+        show("Erro: " + error.message, "error");
       }
     });
   </script>
