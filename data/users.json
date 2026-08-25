@@ -15,14 +15,6 @@
       "active": true,
       "salt": "1lGYiQFr7+tGTHcc2GKlUQ==",
       "passwordHash": "fGnrvPo/2pXOoKz733jscwuRc4cXKx9rBkvc1RyMpW+O1lfNHTKKYaYxR6cX9mN9K3R3tRUUJGTJqyCbvRnkJQ=="
-    },
-    {
-      "username": "teste.teste",
-      "name": "TESTE",
-      "role": "user",
-      "active": true,
-      "salt": "qD/pjCTFcXP6exrhZCBOEQ==",
-      "passwordHash": "VU7r02BbScrkxKWPAOA14C4aK1Dde+0iWBd+4NN3RJ+sVUpld0S5CsP1Kmu6TUibAV5mie66smZS2GoUzY9EMA=="
     }
   ]
 }
