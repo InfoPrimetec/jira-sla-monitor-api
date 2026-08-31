@@ -15,6 +15,14 @@
       "active": true,
       "salt": "1lGYiQFr7+tGTHcc2GKlUQ==",
       "passwordHash": "fGnrvPo/2pXOoKz733jscwuRc4cXKx9rBkvc1RyMpW+O1lfNHTKKYaYxR6cX9mN9K3R3tRUUJGTJqyCbvRnkJQ=="
+    },
+    {
+      "username": "leandro",
+      "name": "Leandro",
+      "role": "user",
+      "active": true,
+      "salt": "eVreuC6pNRxTiC1xXb6Y8w==",
+      "passwordHash": "/0DS2a1Gi3Nuf3wQ7SR4iYIskoEeauQB0u2vCMBf+GTziATIeJCRW34G4dwRCklJVIZYv/gMziFiKUyAZNvZQg=="
     }
   ]
 }
